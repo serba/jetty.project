@@ -35,15 +35,15 @@ import org.eclipse.jetty.io.ConnectionStatistics;
 import org.eclipse.jetty.server.LocalConnector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StatisticsHandlerTest
 {
@@ -53,7 +53,7 @@ public class StatisticsHandlerTest
     private LatchHandler _latchHandler;
     private StatisticsHandler _statsHandler;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception
     {
         _server = new Server();
@@ -70,7 +70,7 @@ public class StatisticsHandlerTest
         _latchHandler.setHandler(_statsHandler);
     }
 
-    @After
+    @AfterEach
     public void destroy() throws Exception
     {
         _server.stop();

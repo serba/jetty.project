@@ -18,6 +18,10 @@
 
 package org.eclipse.jetty.io;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -46,11 +50,11 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.TimerScheduler;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class SslConnectionTest
@@ -131,7 +135,7 @@ public class SslConnectionTest
     }
     
 
-    @BeforeClass
+    @BeforeAll
     public static void initSslEngine() throws Exception
     {
         File keystore = MavenTestingUtils.getTestResourceFile("keystore");
@@ -141,7 +145,7 @@ public class SslConnectionTest
         __sslCtxFactory.start();
     }
 
-    @Before
+    @BeforeEach
     public void startManager() throws Exception
     {
         _testFill=true;
@@ -157,7 +161,7 @@ public class SslConnectionTest
 
     }
 
-    @After
+    @AfterEach
     public void stopManager() throws Exception
     {
         if (_lastEndp.isOpen())
@@ -327,15 +331,7 @@ public class SslConnectionTest
                 client.startHandshake();
 
                 client.getOutputStream().write("World".getBytes(StandardCharsets.UTF_8));
-                try
-                {
-                    client.getInputStream().read(buffer);
-                    Assert.fail();
-                }
-                catch (SSLException e)
-                {
-                    // expected
-                }
+                assertThrows(SSLException.class, ()-> client.getInputStream().read(buffer));
             }
         }
     }
@@ -377,15 +373,7 @@ public class SslConnectionTest
                 client.startHandshake();
 
                 client.getOutputStream().write("World".getBytes(StandardCharsets.UTF_8));
-                try
-                {
-                    client.getInputStream().read(buffer);
-                    Assert.fail();
-                }
-                catch (SSLException e)
-                {
-                    // expected
-                }
+                assertThrows(SSLException.class, ()-> client.getInputStream().read(buffer));
             }
         }
     }

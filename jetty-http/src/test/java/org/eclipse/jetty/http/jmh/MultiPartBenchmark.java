@@ -30,8 +30,8 @@ import java.util.Random;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 
-import org.eclipse.jetty.http.MultiPartFormInputStream;
 import org.eclipse.jetty.http.MultiPartCaptureTest.MultipartExpectations;
+import org.eclipse.jetty.http.MultiPartFormInputStream;
 import org.eclipse.jetty.toolchain.test.MavenTestingUtils;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -50,7 +50,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 public class MultiPartBenchmark
 {
-    
     public static final int MAX_FILE_SIZE = Integer.MAX_VALUE;
     public static final int MAX_REQUEST_SIZE = Integer.MAX_VALUE;
     public static final int FILE_SIZE_THRESHOLD = 50;

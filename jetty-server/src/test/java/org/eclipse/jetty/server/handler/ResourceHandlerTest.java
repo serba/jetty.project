@@ -27,7 +27,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,15 +49,15 @@ import org.eclipse.jetty.server.LocalConnector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.toolchain.test.MavenTestingUtils;
-import org.eclipse.jetty.toolchain.test.annotation.Slow;
 import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.IO;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 /**
  * Resource Handler test
@@ -73,7 +74,7 @@ public class ResourceHandlerTest
     private static ContextHandler _contextHandler;
     private static ResourceHandler _resourceHandler;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception
     {
         File dir = MavenTestingUtils.getTargetFile("test-classes/simple");
@@ -138,13 +139,13 @@ public class ResourceHandlerTest
         _server.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception
     {
         _server.stop();
     }
 
-    @Before
+    @BeforeEach
     public void before()
     {
         _config.setOutputBufferSize(4096);
@@ -230,9 +231,9 @@ public class ResourceHandlerTest
             socket.getOutputStream().write("GET /resource/bigger.txt HTTP/1.0\n\n".getBytes());
             Thread.sleep(1000);
             String response = IO.toString(socket.getInputStream());
-            Assert.assertThat(response,Matchers.startsWith("HTTP/1.1 200 OK"));
-            Assert.assertThat(response,Matchers.containsString("   400\tThis is a big file" + LN + "     1\tThis is a big file"));
-            Assert.assertThat(response,Matchers.endsWith("   400\tThis is a big file" + LN));
+            assertThat(response,Matchers.startsWith("HTTP/1.1 200 OK"));
+            assertThat(response,Matchers.containsString("   400\tThis is a big file" + LN + "     1\tThis is a big file"));
+            assertThat(response,Matchers.endsWith("   400\tThis is a big file" + LN));
         }
     }
     
@@ -263,7 +264,7 @@ public class ResourceHandlerTest
     }
     
     @Test
-    @Slow
+    @DisabledIfSystemProperty(named = "env", matches = "ci") // TODO: SLOW, needs review
     public void testSlowBiggest() throws Exception
     {
         _connector.setIdleTimeout(10000);
@@ -299,9 +300,9 @@ public class ResourceHandlerTest
                 // System.err.println(++i+": "+BufferUtil.toDetailString(buffer));
             }
 
-            Assert.assertEquals('E',buffer.get(buffer.limit()-4));
-            Assert.assertEquals('N',buffer.get(buffer.limit()-3));
-            Assert.assertEquals('D',buffer.get(buffer.limit()-2));
+            assertEquals('E',buffer.get(buffer.limit()-4));
+            assertEquals('N',buffer.get(buffer.limit()-3));
+            assertEquals('D',buffer.get(buffer.limit()-2));
             
         }
     }

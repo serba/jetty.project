@@ -1,7 +1,7 @@
 #!groovy
 
 def jdks = ["jdk8","jdk9","jdk10","jdk11"]
-def oss = ["linux"] 
+def oss = ["linux"]
 def builds = [:]
 for (def os in oss) {
   for (def jdk in jdks) {
@@ -19,7 +19,7 @@ def getFullBuild(jdk, os) {
       def mvntoolInvoker = tool name: 'maven3.5', type: 'hudson.tasks.Maven$MavenInstallation'
       def jdktool = tool name: "$jdk", type: 'hudson.model.JDK'
       def mvnName = 'maven3.5'
-      def localRepo = "${env.JENKINS_HOME}/${env.EXECUTOR_NUMBER}" // ".repository" // 
+      def localRepo = "${env.JENKINS_HOME}/${env.EXECUTOR_NUMBER}" // ".repository" //
       def settingsName = 'oss-settings.xml'
 
       // Environment
@@ -47,7 +47,7 @@ def getFullBuild(jdk, os) {
                       publisherStrategy: 'EXPLICIT',
                       globalMavenSettingsConfig: settingsName,
                       mavenLocalRepo: localRepo) {
-                sh "mvn -V -B clean install -DskipTests -T6 -e"
+                sh "mvn -U -V -B clean install -DskipTests -T6 -e"
               }
 
             }
@@ -69,7 +69,7 @@ def getFullBuild(jdk, os) {
                       publisherStrategy: 'EXPLICIT',
                       globalMavenSettingsConfig: settingsName,
                       mavenLocalRepo: localRepo) {
-                sh "mvn -V -B javadoc:javadoc -T6 -e"
+                sh "mvn -U -V -B javadoc:javadoc -T6 -e"
               }
             }
           }
@@ -92,7 +92,7 @@ def getFullBuild(jdk, os) {
                       globalMavenSettingsConfig: settingsName,
                       //options: [invokerPublisher(disabled: false)],
                       mavenLocalRepo: localRepo) {
-                sh "mvn -V -B install -Dmaven.test.failure.ignore=true -e -Pmongodb -T3 -DmavenHome=${mvntoolInvoker} -Dunix.socket.tmp="+env.JENKINS_HOME
+                sh "mvn -U -V -B install -Denv=ci -Dmaven.test.failure.ignore=true -e -Pmongodb -T3 -DmavenHome=${mvntoolInvoker} -Dunix.socket.tmp="+env.JENKINS_HOME
               }
               // withMaven doesn't label..
               // Report failures in the jenkins UI

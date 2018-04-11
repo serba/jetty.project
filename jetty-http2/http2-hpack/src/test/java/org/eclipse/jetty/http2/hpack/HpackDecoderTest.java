@@ -19,30 +19,26 @@
 
 package org.eclipse.jetty.http2.hpack;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+import static org.eclipse.jetty.http.HttpFieldsMatchers.containsHeaderValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.eclipse.jetty.http.BadMessageException;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpScheme;
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MetaData;
-import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.TypeUtil;
-import org.eclipse.jetty.util.log.Log;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class HpackDecoderTest
 {
@@ -183,14 +179,14 @@ public class HpackDecoderTest
 
         assertThat(response.getStatus(),is(200));
         assertThat(response.getFields().size(),is(6));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.DATE,"Fri, 15 Jul 2016 02:36:20 GMT")));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.CONTENT_TYPE,"text/html")));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.CONTENT_ENCODING,"")));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.CONTENT_LENGTH,"42")));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.SERVER,"nghttpx nghttp2/1.12.0")));
-        assertTrue(response.getFields().contains(new HttpField(HttpHeader.VIA,"1.1 nghttpx")));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.DATE,"Fri, 15 Jul 2016 02:36:20 GMT"));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.CONTENT_TYPE,"text/html"));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.CONTENT_ENCODING,""));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.CONTENT_LENGTH,"42"));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.SERVER,"nghttpx nghttp2/1.12.0"));
+        assertThat(response.getFields(), containsHeaderValue(HttpHeader.VIA,"1.1 nghttpx"));
     }
-    
+
     @Test
     public void testResize() throws Exception
     {
@@ -202,7 +198,7 @@ public class HpackDecoderTest
         assertThat(metaData.getFields().get(HttpHeader.CONTENT_TYPE),is("some/content"));
         assertThat(decoder.getHpackContext().getDynamicTableSize(),is(0));
     }
-    
+
     @Test
     public void testTooBigToIndex()
     {
@@ -211,7 +207,7 @@ public class HpackDecoderTest
 
         HpackDecoder decoder = new HpackDecoder(128,8192);
         MetaData metaData = decoder.decode(buffer);
-        
+
         assertThat(decoder.getHpackContext().getDynamicTableSize(),is(0));
         assertThat(metaData.getFields().get(HttpHeader.C_PATH),Matchers.startsWith("This is a very large field"));
     }
@@ -223,16 +219,10 @@ public class HpackDecoderTest
         ByteBuffer buffer = ByteBuffer.wrap(TypeUtil.fromHexString(encoded));
 
         HpackDecoder decoder = new HpackDecoder(128,8192);
-        try
-        {
-            decoder.decode(buffer);
-            Assert.fail();
-        }
-        catch (BadMessageException e)
-        {
-            assertThat(e.getCode(),equalTo(HttpStatus.BAD_REQUEST_400));
-            assertThat(e.getReason(),Matchers.startsWith("Unknown index"));
-        }
-    
+
+        BadMessageException e = assertThrows(BadMessageException.class,
+                ()-> decoder.decode(buffer));
+        assertThat(e.getCode(),is(HttpStatus.BAD_REQUEST_400));
+        assertThat(e.getReason(),startsWith("Unknown index"));
     }
 }

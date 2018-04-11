@@ -18,6 +18,7 @@
 
 package org.eclipse.jetty.websocket.jsr356;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.net.URI;
@@ -34,10 +35,10 @@ import javax.websocket.WebSocketContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link javax.websocket.ClientEndpointConfig.Configurator}
@@ -66,7 +67,7 @@ public class ConfiguratorTest
     private static EchoHandler handler;
     private static URI serverUri;
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception
     {
         server = new Server();
@@ -92,7 +93,7 @@ public class ConfiguratorTest
         serverUri = new URI(String.format("ws://%s:%d/",host,port));
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer()
     {
         try
@@ -128,7 +129,7 @@ public class ConfiguratorTest
         echoer.textCapture.messageQueue.awaitMessages(1,1000,TimeUnit.MILLISECONDS);
 
         // Validate client side configurator use
-        Assert.assertThat("configurator.request",configurator.request,notNullValue());
-        Assert.assertThat("configurator.response",configurator.response,notNullValue());
+        assertThat("configurator.request",configurator.request,notNullValue());
+        assertThat("configurator.response",configurator.response,notNullValue());
     }
 }

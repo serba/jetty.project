@@ -18,6 +18,10 @@
 
 package org.eclipse.jetty.http2.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritePendingException;
@@ -62,8 +66,8 @@ import org.eclipse.jetty.util.FuturePromise;
 import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.Jetty;
 import org.eclipse.jetty.util.Promise;
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 public class HTTP2Test extends AbstractTest
 {
@@ -83,19 +87,19 @@ public class HTTP2Test extends AbstractTest
             @Override
             public void onHeaders(Stream stream, HeadersFrame frame)
             {
-                Assert.assertTrue(stream.getId() > 0);
+                assertTrue(stream.getId() > 0);
 
-                Assert.assertTrue(frame.isEndStream());
-                Assert.assertEquals(stream.getId(), frame.getStreamId());
-                Assert.assertTrue(frame.getMetaData().isResponse());
+                assertTrue(frame.isEndStream());
+                assertEquals(stream.getId(), frame.getStreamId());
+                assertTrue(frame.getMetaData().isResponse());
                 MetaData.Response response = (MetaData.Response)frame.getMetaData();
-                Assert.assertEquals(200, response.getStatus());
+                assertEquals(200, response.getStatus());
 
                 latch.countDown();
             }
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -130,22 +134,22 @@ public class HTTP2Test extends AbstractTest
             @Override
             public void onHeaders(Stream stream, HeadersFrame frame)
             {
-                Assert.assertFalse(frame.isEndStream());
-                Assert.assertEquals(stream.getId(), frame.getStreamId());
+                assertFalse(frame.isEndStream());
+                assertEquals(stream.getId(), frame.getStreamId());
                 MetaData.Response response = (MetaData.Response)frame.getMetaData();
-                Assert.assertEquals(200, response.getStatus());
+                assertEquals(200, response.getStatus());
             }
 
             @Override
             public void onData(Stream stream, DataFrame frame, Callback callback)
             {
-                Assert.assertTrue(frame.isEndStream());
+                assertTrue(frame.isEndStream());
                 callback.succeeded();
                 latch.countDown();
             }
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -172,13 +176,13 @@ public class HTTP2Test extends AbstractTest
             @Override
             public void onHeaders(Stream stream, HeadersFrame frame)
             {
-                Assert.assertTrue(stream.getId() > 0);
+                assertTrue(stream.getId() > 0);
 
-                Assert.assertFalse(frame.isEndStream());
-                Assert.assertEquals(stream.getId(), frame.getStreamId());
-                Assert.assertTrue(frame.getMetaData().isResponse());
+                assertFalse(frame.isEndStream());
+                assertEquals(stream.getId(), frame.getStreamId());
+                assertTrue(frame.getMetaData().isResponse());
                 MetaData.Response response = (MetaData.Response)frame.getMetaData();
-                Assert.assertEquals(200, response.getStatus());
+                assertEquals(200, response.getStatus());
 
                 latch.countDown();
             }
@@ -186,8 +190,8 @@ public class HTTP2Test extends AbstractTest
             @Override
             public void onData(Stream stream, DataFrame frame, Callback callback)
             {
-                Assert.assertTrue(frame.isEndStream());
-                Assert.assertEquals(ByteBuffer.wrap(content), frame.getData());
+                assertTrue(frame.isEndStream());
+                assertEquals(ByteBuffer.wrap(content), frame.getData());
 
                 callback.succeeded();
                 latch.countDown();
@@ -237,7 +241,7 @@ public class HTTP2Test extends AbstractTest
             stream.data(dataFrame, Callback.NOOP);
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -280,7 +284,7 @@ public class HTTP2Test extends AbstractTest
             });
         }
 
-        Assert.assertTrue(server.dump() + System.lineSeparator() + client.dump(), latch.await(requests, TimeUnit.SECONDS));
+        assertTrue(server.dump() + System.lineSeparator() + client.dump(), latch.await(requests, TimeUnit.SECONDS));
     }
 
     @Test
@@ -307,13 +311,13 @@ public class HTTP2Test extends AbstractTest
             public void onHeaders(Stream stream, HeadersFrame frame)
             {
                 MetaData.Response response = (MetaData.Response)frame.getMetaData();
-                Assert.assertEquals(status, response.getStatus());
+                assertEquals(status, response.getStatus());
                 if (frame.isEndStream())
                     latch.countDown();
             }
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -327,9 +331,9 @@ public class HTTP2Test extends AbstractTest
             @Override
             protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
             {
-                Assert.assertEquals(host, request.getServerName());
-                Assert.assertEquals(port, request.getServerPort());
-                Assert.assertEquals(authority, request.getHeader("Host"));
+                assertEquals(host, request.getServerName());
+                assertEquals(port, request.getServerPort());
+                assertEquals(authority, request.getHeader("Host"));
             }
         });
 
@@ -344,13 +348,13 @@ public class HTTP2Test extends AbstractTest
             public void onHeaders(Stream stream, HeadersFrame frame)
             {
                 MetaData.Response response = (MetaData.Response)frame.getMetaData();
-                Assert.assertEquals(200, response.getStatus());
+                assertEquals(200, response.getStatus());
                 if (frame.isEndStream())
                     latch.countDown();
             }
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -372,7 +376,7 @@ public class HTTP2Test extends AbstractTest
 
         server.stop();
 
-        Assert.assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -394,7 +398,7 @@ public class HTTP2Test extends AbstractTest
 
         client.stop();
 
-        Assert.assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -429,7 +433,7 @@ public class HTTP2Test extends AbstractTest
                 settingsLatch.countDown();
             }
         });
-        Assert.assertTrue(settingsLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(settingsLatch.await(5, TimeUnit.SECONDS));
 
         MetaData.Request request1 = newRequest("GET", new HttpFields());
         FuturePromise<Stream> promise1 = new FuturePromise<>();
@@ -472,8 +476,8 @@ public class HTTP2Test extends AbstractTest
             }
         }, new Stream.Listener.Adapter());
 
-        Assert.assertTrue(maxStreamsLatch.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(2, session.getStreams().size());
+        assertTrue(maxStreamsLatch.await(5, TimeUnit.SECONDS));
+        assertEquals(2, session.getStreams().size());
 
         // End the second stream.
         stream2.data(new DataFrame(stream2.getId(), BufferUtil.EMPTY_BUFFER, true), new Callback()
@@ -484,8 +488,8 @@ public class HTTP2Test extends AbstractTest
                 exchangeLatch2.countDown();
             }
         });
-        Assert.assertTrue(exchangeLatch2.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(1, session.getStreams().size());
+        assertTrue(exchangeLatch2.await(5, TimeUnit.SECONDS));
+        assertEquals(1, session.getStreams().size());
 
         // Create a fourth stream.
         MetaData.Request request4 = newRequest("GET", new HttpFields());
@@ -506,8 +510,8 @@ public class HTTP2Test extends AbstractTest
                     exchangeLatch4.countDown();
             }
         });
-        Assert.assertTrue(exchangeLatch4.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(1, session.getStreams().size());
+        assertTrue(exchangeLatch4.await(5, TimeUnit.SECONDS));
+        assertEquals(1, session.getStreams().size());
 
         // End the first stream.
         stream1.data(new DataFrame(stream1.getId(), BufferUtil.EMPTY_BUFFER, true), new Callback()
@@ -518,8 +522,8 @@ public class HTTP2Test extends AbstractTest
                 exchangeLatch1.countDown();
             }
         });
-        Assert.assertTrue(exchangeLatch2.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(0, session.getStreams().size());
+        assertTrue(exchangeLatch2.await(5, TimeUnit.SECONDS));
+        assertEquals(0, session.getStreams().size());
     }
 
     @Test
@@ -613,7 +617,7 @@ public class HTTP2Test extends AbstractTest
             }
         });
 
-        Assert.assertTrue(completeLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(completeLatch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -686,7 +690,7 @@ public class HTTP2Test extends AbstractTest
             }
         });
 
-        Assert.assertTrue(completeLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(completeLatch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -727,8 +731,8 @@ public class HTTP2Test extends AbstractTest
         session.newStream(request, new Promise.Adapter<>(), new Stream.Listener.Adapter());
 
         // Make sure onClose() is called.
-        Assert.assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
-        Assert.assertFalse(failureLatch.await(1, TimeUnit.SECONDS));
+        assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
+        assertFalse(failureLatch.await(1, TimeUnit.SECONDS));
     }
 
     @Test
@@ -790,9 +794,9 @@ public class HTTP2Test extends AbstractTest
             }
         });
 
-        Assert.assertTrue(responseLatch.await(5, TimeUnit.SECONDS));
-        Assert.assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
-        Assert.assertTrue(goAwayLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(responseLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(closeLatch.await(5, TimeUnit.SECONDS));
+        assertTrue(goAwayLatch.await(5, TimeUnit.SECONDS));
     }
 
     private static void sleep(long time)
