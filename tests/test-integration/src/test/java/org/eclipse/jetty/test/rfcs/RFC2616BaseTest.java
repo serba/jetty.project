@@ -413,7 +413,7 @@ public abstract class RFC2616BaseTest
         assertEquals(1, responses.size(), "Response Count");
 
         response = responses.get(0); // response 1
-        assertEquals("4.4.3 Ignore Content-Length / Response Code", HttpStatus.BAD_REQUEST_400, response.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST_400, response.getStatus(),"4.4.3 Ignore Content-Length / Response Code");
 
         // 4.4 - Server can request valid Content-Length from client if client
         // fails to provide a Content-Length.

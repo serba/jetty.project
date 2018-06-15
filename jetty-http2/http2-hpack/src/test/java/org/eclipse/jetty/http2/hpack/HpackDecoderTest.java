@@ -209,7 +209,7 @@ public class HpackDecoderTest
         MetaData metaData = decoder.decode(buffer);
 
         assertThat(decoder.getHpackContext().getDynamicTableSize(),is(0));
-        assertThat(metaData.getFields().get(HttpHeader.C_PATH),Matchers.startsWith("This is a very large field"));
+        assertThat(metaData.getFields().get(HttpHeader.C_PATH),startsWith("This is a very large field"));
     }
 
     @Test

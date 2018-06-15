@@ -539,7 +539,7 @@ public class ClientCloseTest
     }
 
     @Test
-    @Ignore("Issue #2625")
+    @Disabled("Issue #2625")
     public void testStopLifecycle() throws Exception
     {
         // Set client timeout

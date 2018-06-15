@@ -18,11 +18,15 @@
 
 package org.eclipse.jetty.http2.client;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -280,16 +284,16 @@ public class TrailersTest extends AbstractTest
             }
         });
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Assert.assertThat(frames.toString(), frames.size(), Matchers.is(3));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertThat(frames.toString(), frames.size(), is(3));
 
         HeadersFrame headers = (HeadersFrame)frames.get(0);
         DataFrame data = (DataFrame)frames.get(1);
         HeadersFrame trailers = (HeadersFrame)frames.get(2);
 
-        Assert.assertFalse(headers.isEndStream());
-        Assert.assertFalse(data.isEndStream());
-        Assert.assertTrue(trailers.isEndStream());
-        Assert.assertThat(trailers.getMetaData().getFields().get(trailerName), Matchers.equalTo(trailerValue));
+        assertFalse(headers.isEndStream());
+        assertFalse(data.isEndStream());
+        assertTrue(trailers.isEndStream());
+        assertThat(trailers.getMetaData().getFields().get(trailerName), equalTo(trailerValue));
     }
 }
