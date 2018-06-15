@@ -21,6 +21,9 @@ package org.eclipse.jetty.http;
 import static org.eclipse.jetty.http.HttpComplianceSection.NO_FIELD_FOLDING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -30,9 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jetty.http.HttpParser.State;
 import org.eclipse.jetty.util.BufferUtil;
@@ -327,7 +328,7 @@ public class HttpParserTest
         parseAll(parser, buffer);
 
         assertThat(_bad, Matchers.notNullValue());
-        assertThat(_bad, Matchers.containsString("Header Folding"));
+        assertThat(_bad, containsString("Header Folding"));
         assertThat(_complianceViolation,Matchers.empty());
     }
     
@@ -345,7 +346,7 @@ public class HttpParserTest
         parseAll(parser, buffer);
 
         assertThat(_bad, Matchers.notNullValue());
-        assertThat(_bad, Matchers.containsString("Illegal character"));
+        assertThat(_bad, containsString("Illegal character"));
     }
     
     @Test
@@ -362,7 +363,7 @@ public class HttpParserTest
         parseAll(parser, buffer);
 
         assertThat(_bad, Matchers.notNullValue());
-        assertThat(_bad, Matchers.containsString("Illegal character"));
+        assertThat(_bad, containsString("Illegal character"));
     }
 
     @Test // TODO: Parameterize Test
@@ -414,9 +415,9 @@ public class HttpParserTest
                 String test = "whitespace.[" + compliance + "].[" + j + "]";
                 String expected = whitespaces[j][1];
                 if (expected==null)
-                    assertNull(test, _bad);
+                    assertThat(test, _bad, is(nullValue()));
                 else
-                    assertThat(test, _bad, Matchers.containsString(expected));
+                    assertThat(test, _bad, containsString(expected));
             }
         }
     }
@@ -463,7 +464,7 @@ public class HttpParserTest
         HttpParser parser = new HttpParser(handler,HttpCompliance.CUSTOM0);
         parseAll(parser, buffer);
         
-        assertThat(_bad, Matchers.containsString("Illegal character"));
+        assertThat(_bad, containsString("Illegal character"));
         assertThat(_complianceViolation,contains(HttpComplianceSection.NO_WS_AFTER_FIELD_NAME));
     }
 
@@ -481,7 +482,7 @@ public class HttpParserTest
         HttpParser parser = new HttpParser(handler,HttpCompliance.CUSTOM0);
         parseAll(parser, buffer);
         
-        assertThat(_bad, Matchers.containsString("Illegal character"));
+        assertThat(_bad, containsString("Illegal character"));
         assertThat(_complianceViolation,contains(HttpComplianceSection.NO_WS_AFTER_FIELD_NAME));
     }
 
@@ -533,7 +534,7 @@ public class HttpParserTest
         assertEquals("HTTP/1.1", _methodOrVersion);
         assertEquals("204", _uriOrStatus);
         assertEquals("No Content", _versionOrReason);
-        assertThat(_bad, Matchers.containsString("Illegal character "));
+        assertThat(_bad, containsString("Illegal character "));
     }
 
     @Test
@@ -548,7 +549,7 @@ public class HttpParserTest
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler,HttpCompliance.RFC7230_LEGACY);
         parseAll(parser, buffer);
-        assertThat(_bad, Matchers.containsString("Illegal character"));
+        assertThat(_bad, containsString("Illegal character"));
         assertThat(_complianceViolation,Matchers.empty());
     }
     
@@ -1050,7 +1051,7 @@ public class HttpParserTest
         assertEquals("GET", _methodOrVersion);
         assertEquals("/chunk", _uriOrStatus);
         assertEquals("HTTP/1.0", _versionOrReason);
-        assertThat(_bad,Matchers.containsString("Bad chunking"));
+        assertThat(_bad,containsString("Bad chunking"));
     }
     @Test
     public void testChunkParseTrailer() throws Exception
@@ -2074,7 +2075,7 @@ public class HttpParserTest
             HttpParser.RequestHandler handler = new Handler();
             HttpParser parser = new HttpParser(handler);
             parser.parseNext(buffer);
-            assertThat(_bad, Matchers.containsString("Bad"));
+            assertThat(_bad, containsString("Bad"));
         }
     }
 
@@ -2106,7 +2107,7 @@ public class HttpParserTest
         HttpParser.RequestHandler handler = new Handler();
         HttpParser parser = new HttpParser(handler);
         parser.parseNext(buffer);
-        assertThat(_bad, Matchers.containsString("Bad Host"));
+        assertThat(_bad, containsString("Bad Host"));
     }
 
     @Test
