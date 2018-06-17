@@ -92,7 +92,7 @@ def getFullBuild(jdk, os) {
                       globalMavenSettingsConfig: settingsName,
                       //options: [invokerPublisher(disabled: false)],
                       mavenLocalRepo: localRepo) {
-                sh "mvn -U -V -B install -Denv=ci -Dmaven.test.failure.ignore=true -e -Pmongodb -DmavenHome=${mvntoolInvoker} -Dunix.socket.tmp="+env.JENKINS_HOME
+                sh "mvn -U -V -B install -Denv=ci -Dmaven.test.failure.ignore=true -e -Pmongodb -T3 -DmavenHome=${mvntoolInvoker} -Dunix.socket.tmp="+env.JENKINS_HOME
               }
               // withMaven doesn't label..
               // Report failures in the jenkins UI
