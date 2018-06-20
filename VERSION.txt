@@ -1,3 +1,5 @@
+jetty-9.4.7.1-SNAPSHOT
+
 jetty-9.4.7.v20180619 - 19 June 2018
  + 2102 Backport FileSessionDataStore
 
