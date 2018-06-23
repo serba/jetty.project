@@ -351,7 +351,7 @@ public class StdErrLog extends AbstractLogger
     @Override
     public boolean isDebugEnabled()
     {
-        return (_level <= LEVEL_DEBUG);
+        return false;
     }
 
     /**
