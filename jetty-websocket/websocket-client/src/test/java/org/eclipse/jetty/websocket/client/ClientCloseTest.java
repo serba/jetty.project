@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -77,6 +78,7 @@ import org.eclipse.jetty.websocket.common.test.BlockheadServer;
 import org.eclipse.jetty.websocket.common.test.RawFrameBuilder;
 import org.eclipse.jetty.websocket.common.test.Timeouts;
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -353,6 +355,8 @@ public class ClientCloseTest
             // client close event on ws-endpoint
             clientSocket.assertReceivedCloseEvent(timeout, is(StatusCode.NORMAL), containsString("From Server"));
         }
+
+        assertThat("Client Open Sessions", client.getOpenSessions(), empty());
     }
 
     @Disabled("Need sbordet's help here")
@@ -454,6 +458,7 @@ public class ClientCloseTest
 
         // client triggers close event on client ws-endpoint
         clientSocket.assertReceivedCloseEvent(timeout,is(StatusCode.PROTOCOL),allOf(containsString("Invalid control frame"),containsString("length")));
+        assertThat("Client Open Sessions", client.getOpenSessions(), empty());
     }
 
     @Test
@@ -497,6 +502,7 @@ public class ClientCloseTest
                             containsString("Disconnected")
                     ));
         }
+        assertThat("Client Open Sessions", client.getOpenSessions(), empty());
     }
 
     @Test
@@ -535,7 +541,15 @@ public class ClientCloseTest
             // client idle timeout triggers close event on client ws-endpoint
             assertThat("OnError Latch", clientSocket.errorLatch.await(2, TimeUnit.SECONDS), is(true));
             assertThat("OnError", clientSocket.error.get(), instanceOf(TimeoutException.class));
+
+            // client close should occur
+            clientSocket.assertReceivedCloseEvent(timeout, is(StatusCode.ABNORMAL),
+                    anyOf(
+                            containsString("Timeout"),
+                            containsString("Disconnected")
+                    ));
         }
+        assertThat("Client Open Sessions", client.getOpenSessions(), empty());
     }
 
     @Test
@@ -589,6 +603,7 @@ public class ClientCloseTest
                     clientSockets.get(i).assertReceivedCloseEvent(timeout, is(StatusCode.SHUTDOWN), containsString("Shutdown"));
                 }
             });
+            Assert.assertThat("Client Open Sessions", client.getOpenSessions(), empty());
         }
         finally
         {
@@ -642,5 +657,6 @@ public class ClientCloseTest
             // assert - close reason message contains (write failure)
             clientSocket.assertReceivedCloseEvent(timeout, is(StatusCode.ABNORMAL), containsString("EOF"));
         }
+        assertThat("Client Open Sessions", client.getOpenSessions(), empty());
     }
 }
