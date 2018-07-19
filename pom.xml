@@ -19,7 +19,7 @@
     <alpn.api.version>1.1.2.v20150522</alpn.api.version>
     <jsp.version>8.0.27</jsp.version>
     <!-- default values are unsupported, but required to be defined for reactor sanity reasons -->
-    <alpn.version>undefined</alpn.version>
+    <alpn.version>8.1.0.v20141016</alpn.version>
   </properties>
   <scm>
     <connection>scm:git:https://github.com/eclipse/jetty.project.git</connection>
